@@ -1,0 +1,8 @@
+{
+  "name": "whacked",
+  "private": true,
+  "scripts": {
+    "build": "npm install --prefix whacked_front && npm run build --prefix whacked_front && npm install --prefix server",
+    "start": "npm start --prefix server"
+  }
+}

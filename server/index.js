@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cors from 'cors'
@@ -12,7 +13,7 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
 const { Pool } = pg
 const app = express()
-const port = Number(process.env.API_PORT) || 3001
+const port = Number(process.env.PORT || process.env.API_PORT) || 3001
 
 if (!process.env.DATABASE_URL) {
   console.error(
@@ -382,6 +383,27 @@ function buildServicesSql(env, servicesTable) {
   `
 }
 
+/** Um único Web Service (Render): servir o build Vite do Whacked na mesma origem que `/api`. */
+const repoRoot = path.join(__dirname, '..')
+const staticFromEnv = String(process.env.SERVE_STATIC_FROM || '').trim()
+const frontDist = staticFromEnv
+  ? path.isAbsolute(staticFromEnv)
+    ? staticFromEnv
+    : path.join(repoRoot, staticFromEnv)
+  : path.join(repoRoot, 'whacked_front', 'dist')
+const indexHtml = path.join(frontDist, 'index.html')
+if (fs.existsSync(indexHtml)) {
+  app.use(express.static(frontDist, { index: false }))
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+    if (req.path.startsWith('/api')) return next()
+    res.sendFile(indexHtml, (err) => (err ? next(err) : undefined))
+  })
+}
+
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Whacked API listening on http://0.0.0.0:${port}`)
+  console.log(`Listening on http://0.0.0.0:${port}`)
+  if (fs.existsSync(indexHtml)) {
+    console.log(`Serving SPA from ${frontDist}`)
+  }
 })

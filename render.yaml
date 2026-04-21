@@ -1,0 +1,14 @@
+# Opcional: um único Web Service na raiz (sem Blueprint no painel podes ignorar este ficheiro).
+version: "1"
+
+services:
+  - type: web
+    name: whacked
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
