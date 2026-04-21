@@ -13,6 +13,7 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
 const { Pool } = pg
 const app = express()
+app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS) || 1)
 const port = Number(process.env.PORT || process.env.API_PORT) || 3001
 
 if (!process.env.DATABASE_URL) {
@@ -383,27 +384,91 @@ function buildServicesSql(env, servicesTable) {
   `
 }
 
-/** Um único Web Service (Render): servir o build Vite do Whacked na mesma origem que `/api`. */
+/** Um Web Service com vários domínios custom: escolhe o `dist` pelo Host (Render envia X-Forwarded-Host). */
 const repoRoot = path.join(__dirname, '..')
+
+function splitHostList(value, fallbackCsv) {
+  const raw = (value && String(value).trim()) || fallbackCsv
+  return raw
+    .split(',')
+    .map((s) => s.trim().toLowerCase().split(':')[0])
+    .filter(Boolean)
+}
+
+function requestHost(req) {
+  const xf = req.get('x-forwarded-host')
+  const raw = (xf || req.get('host') || '').split(',')[0].trim()
+  return raw.split(':')[0].toLowerCase()
+}
+
+function resolveSpaDistForHost(host) {
+  const cornHosts = splitHostList(
+    process.env.CORNFIELD_HOSTS,
+    'www.cornfield.work,cornfield.work',
+  )
+  const whackedHosts = splitHostList(
+    process.env.WHACKED_HOSTS,
+    'www.whacked.work,whacked.work',
+  )
+  if (cornHosts.includes(host))
+    return path.join(repoRoot, 'cornfield_front', 'dist')
+  if (whackedHosts.includes(host))
+    return path.join(repoRoot, 'whacked_front', 'dist')
+  if (host.endsWith('.onrender.com'))
+    return path.join(repoRoot, 'whacked_front', 'dist')
+  return path.join(repoRoot, 'whacked_front', 'dist')
+}
+
 const staticFromEnv = String(process.env.SERVE_STATIC_FROM || '').trim()
-const frontDist = staticFromEnv
+const legacySingleDist = staticFromEnv
   ? path.isAbsolute(staticFromEnv)
     ? staticFromEnv
     : path.join(repoRoot, staticFromEnv)
-  : path.join(repoRoot, 'whacked_front', 'dist')
-const indexHtml = path.join(frontDist, 'index.html')
-if (fs.existsSync(indexHtml)) {
-  app.use(express.static(frontDist, { index: false }))
+  : null
+
+const staticMiddlewareByRoot = new Map()
+function staticMwForRoot(rootDir) {
+  if (!staticMiddlewareByRoot.has(rootDir)) {
+    staticMiddlewareByRoot.set(
+      rootDir,
+      express.static(rootDir, { index: false, fallthrough: true }),
+    )
+  }
+  return staticMiddlewareByRoot.get(rootDir)
+}
+
+if (legacySingleDist && fs.existsSync(path.join(legacySingleDist, 'index.html'))) {
+  app.use(staticMwForRoot(legacySingleDist))
   app.use((req, res, next) => {
     if (req.method !== 'GET' && req.method !== 'HEAD') return next()
     if (req.path.startsWith('/api')) return next()
-    res.sendFile(indexHtml, (err) => (err ? next(err) : undefined))
+    res.sendFile(path.join(legacySingleDist, 'index.html'), (err) =>
+      err ? next(err) : undefined,
+    )
+  })
+} else {
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+    if (req.path.startsWith('/api')) return next()
+    const dist = resolveSpaDistForHost(requestHost(req))
+    const indexHtml = path.join(dist, 'index.html')
+    if (!fs.existsSync(indexHtml)) return next()
+    staticMwForRoot(dist)(req, res, () => {
+      res.sendFile(indexHtml, (err) => (err ? next(err) : undefined))
+    })
   })
 }
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on http://0.0.0.0:${port}`)
-  if (fs.existsSync(indexHtml)) {
-    console.log(`Serving SPA from ${frontDist}`)
+  if (legacySingleDist && fs.existsSync(path.join(legacySingleDist, 'index.html'))) {
+    console.log(`Serving SPA (single dir) from ${legacySingleDist}`)
+  } else {
+    const w = path.join(repoRoot, 'whacked_front', 'dist')
+    const c = path.join(repoRoot, 'cornfield_front', 'dist')
+    if (fs.existsSync(path.join(w, 'index.html')))
+      console.log(`Whacked SPA: ${w} (${splitHostList(process.env.WHACKED_HOSTS, 'www.whacked.work,whacked.work').join(', ')})`)
+    if (fs.existsSync(path.join(c, 'index.html')))
+      console.log(`Cornfield SPA: ${c} (${splitHostList(process.env.CORNFIELD_HOSTS, 'www.cornfield.work,cornfield.work').join(', ')})`)
   }
 })
