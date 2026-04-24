@@ -406,12 +406,18 @@ function resolveSpaDistForHost(host) {
     process.env.CORNFIELD_HOSTS,
     'www.cornfield.work,cornfield.work',
   )
+  const gearHosts = splitHostList(
+    process.env.GEARCRAFT_HOSTS,
+    'www.gearcraft.gg,gearcraft.gg',
+  )
   const whackedHosts = splitHostList(
     process.env.WHACKED_HOSTS,
     'www.whacked.work,whacked.work',
   )
   if (cornHosts.includes(host))
     return path.join(repoRoot, 'cornfield_front', 'dist')
+  if (gearHosts.includes(host))
+    return path.join(repoRoot, 'gearcraft_front', 'dist')
   if (whackedHosts.includes(host))
     return path.join(repoRoot, 'whacked_front', 'dist')
   if (host.endsWith('.onrender.com'))
@@ -466,9 +472,12 @@ app.listen(port, '0.0.0.0', () => {
   } else {
     const w = path.join(repoRoot, 'whacked_front', 'dist')
     const c = path.join(repoRoot, 'cornfield_front', 'dist')
+    const g = path.join(repoRoot, 'gearcraft_front', 'dist')
     if (fs.existsSync(path.join(w, 'index.html')))
       console.log(`Whacked SPA: ${w} (${splitHostList(process.env.WHACKED_HOSTS, 'www.whacked.work,whacked.work').join(', ')})`)
     if (fs.existsSync(path.join(c, 'index.html')))
       console.log(`Cornfield SPA: ${c} (${splitHostList(process.env.CORNFIELD_HOSTS, 'www.cornfield.work,cornfield.work').join(', ')})`)
+    if (fs.existsSync(path.join(g, 'index.html')))
+      console.log(`Gearcraft SPA: ${g} (${splitHostList(process.env.GEARCRAFT_HOSTS, 'www.gearcraft.gg,gearcraft.gg').join(', ')})`)
   }
 })
