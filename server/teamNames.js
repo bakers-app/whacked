@@ -14,6 +14,7 @@ export const TEAM_ID_TO_LABEL = Object.freeze({
   '1354858326327820292': 'Freelancer',
   '1412281399393648710': 'Gachi Squad',
   '1354858326361641082': 'Garçom',
+  '1498384696181002351': 'GG',
   '1372743650752335933': 'Greensky',
   '1375932937714925740': 'Guild Azralon 11',
   '1374515998748577924': 'Guild Azralon 2',

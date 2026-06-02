@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { downloadWeeklyScheduleXlsx } from './scheduleExport.js'
 import './App.css'
 import { fallbackCategories } from './catalogFallback.js'
 
@@ -158,6 +159,28 @@ function IconCalendar({ className }) {
   )
 }
 
+function IconDownload({ className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M12 3v12" />
+      <path d="m7 10 5 5 5-5" />
+      <path d="M5 21h14" />
+    </svg>
+  )
+}
+
 function PriceBlock({ price }) {
   const s = String(price ?? '').trim()
   const m = s.match(/^(.+?)\s*(gold)$/i)
@@ -267,6 +290,7 @@ function SchedulePanel({
   runsByDay,
   runsLoading,
   runsError,
+  brandName,
 }) {
   const selectedDay = weekDays[scheduleDayIndex] || weekDays[0]
   const dateKey = selectedDay?.dateKey
@@ -286,6 +310,14 @@ function SchedulePanel({
     (r) => (Number(r.slotsAvailable) || 0) > 0,
   ).length
 
+  const handleDownload = useCallback(() => {
+    void downloadWeeklyScheduleXlsx({
+      weekDays,
+      runsByDay,
+      brandName: brandName || 'CORNFIELD',
+    })
+  }, [weekDays, runsByDay, brandName])
+
   return (
     <div className={solo ? 'wx-sched-block wx-sched-block--solo' : 'wx-sched-block'}>
       <div className="wx-sched-title-row">
@@ -300,6 +332,17 @@ function SchedulePanel({
         Next 7 days follow your device calendar. Times shown as stored (reference EST when
         applicable).
       </p>
+      <div className="wx-sched-actions">
+        <button
+          type="button"
+          className="wx-sched-download"
+          disabled={runsLoading}
+          onClick={handleDownload}
+        >
+          <IconDownload />
+          Download schedule (Excel)
+        </button>
+      </div>
 
       {runsError ? (
         <p className="wx-sched-api-err" role="alert">
@@ -732,6 +775,7 @@ function App() {
               runsByDay={runsByDay}
               runsLoading={runsLoading}
               runsError={runsError}
+              brandName="CORNFIELD"
             />
           </div>
         )}
@@ -746,6 +790,7 @@ function App() {
               runsByDay={runsByDay}
               runsLoading={runsLoading}
               runsError={runsError}
+              brandName="CORNFIELD"
             />
           </div>
         )}
