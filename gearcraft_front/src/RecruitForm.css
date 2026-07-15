@@ -1,0 +1,225 @@
+.wx-recruit {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.wx-recruit-hero {
+  margin-bottom: 1.75rem;
+}
+
+.wx-recruit-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(196, 181, 253, 0.85);
+}
+
+.wx-recruit-headline {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.wx-recruit-lead {
+  margin: 0 0 1rem;
+  color: rgba(237, 237, 237, 0.78);
+  line-height: 1.55;
+  font-size: 0.975rem;
+}
+
+.wx-recruit-bullets {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: rgba(237, 237, 237, 0.68);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.wx-recruit-bullets li + li {
+  margin-top: 0.35rem;
+}
+
+.wx-recruit-status {
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+}
+
+.wx-recruit-status.is-ok {
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  background: rgba(16, 185, 129, 0.12);
+  color: #a7f3d0;
+}
+
+.wx-recruit-status.is-err {
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+}
+
+.wx-recruit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.wx-recruit-section {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 1.15rem 1.15rem 1.25rem;
+}
+
+.wx-recruit-section-title {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: #fff;
+}
+
+.wx-recruit-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.wx-recruit-label {
+  display: block;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.wx-recruit-input {
+  width: 100%;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.wx-recruit-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.wx-recruit-input:focus {
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+.wx-recruit-textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.wx-recruit-textarea-lg {
+  min-height: 110px;
+}
+
+.wx-recruit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.wx-recruit-chip {
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(237, 237, 237, 0.85);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.wx-recruit-chip:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #fff;
+}
+
+.wx-recruit-chip.is-active {
+  border-color: rgba(168, 85, 247, 0.55);
+  background: rgba(124, 58, 237, 0.22);
+  color: #fff;
+}
+
+.wx-recruit-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.wx-recruit-radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.1rem;
+  margin-top: 0.45rem;
+}
+
+.wx-recruit-radios-stack {
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.wx-recruit-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: rgba(237, 237, 237, 0.88);
+  cursor: pointer;
+}
+
+.wx-recruit-radio input {
+  margin-top: 0.2rem;
+  accent-color: #a855f7;
+}
+
+.wx-recruit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.25rem;
+}
+
+.wx-recruit-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.95), rgba(91, 33, 182, 0.95));
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  transition: opacity 0.15s, filter 0.15s;
+}
+
+.wx-recruit-submit:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.wx-recruit-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.wx-recruit-footnote {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(237, 237, 237, 0.5);
+}

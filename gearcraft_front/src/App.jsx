@@ -2,6 +2,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import './App.css'
 import { fallbackCategories } from './catalogFallback.js'
+import { RecruitForm } from './RecruitForm.jsx'
+
+function pathToView(pathname) {
+  const path = String(pathname || '/').replace(/\/+$/, '') || '/'
+  if (path === '/recruit') return 'recruit'
+  if (path === '/schedule') return 'schedule'
+  return 'catalog'
+}
+
+function viewToPath(view) {
+  if (view === 'recruit') return '/recruit'
+  if (view === 'schedule') return '/schedule'
+  return '/'
+}
 
 const useStaticFallback =
   import.meta.env.VITE_USE_STATIC_FALLBACK === 'true'
@@ -404,9 +418,27 @@ function SchedulePanel({
 }
 
 function App() {
-  const [view, setView] = useState('catalog')
+  const [view, setView] = useState(() =>
+    typeof window !== 'undefined' ? pathToView(window.location.pathname) : 'catalog',
+  )
   const [activeSection, setActiveSection] = useState('all')
   const [scheduleDayIndex, setScheduleDayIndex] = useState(0)
+
+  const navigateView = useCallback((nextView) => {
+    setView(nextView)
+    const nextPath = viewToPath(nextView)
+    if (typeof window !== 'undefined' && window.location.pathname !== nextPath) {
+      window.history.pushState({ view: nextView }, '', nextPath)
+    }
+  }, [])
+
+  useEffect(() => {
+    const onPopState = () => {
+      setView(pathToView(window.location.pathname))
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
 
   const weekDays = useMemo(() => buildWeekDays(), [])
 
@@ -543,14 +575,22 @@ function App() {
   }, [categories, view, sectionId])
 
   const openCatalog = () => {
-    setView('catalog')
+    navigateView('catalog')
     setTimeout(() => scrollToSection('top'), 0)
   }
 
   const openSchedule = () => {
-    setView('schedule')
+    navigateView('schedule')
     setActiveSection('schedule')
     setScheduleDayIndex(0)
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
+  }
+
+  const openRecruit = () => {
+    navigateView('recruit')
+    setActiveSection('recruit')
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     })
@@ -572,13 +612,15 @@ function App() {
       <div className="wx-bg-grid" aria-hidden="true" />
       <div className="wx-bottom-fade" aria-hidden="true" />
 
-      <header className="wx-masthead">
-        <div className="wx-masthead-inner">
-          <button type="button" className="wx-masthead-title" onClick={openCatalog}>
-            GEARCRAFT
-          </button>
-        </div>
-      </header>
+      {view !== 'recruit' && (
+        <header className="wx-masthead">
+          <div className="wx-masthead-inner">
+            <button type="button" className="wx-masthead-title" onClick={openCatalog}>
+              GEARCRAFT
+            </button>
+          </div>
+        </header>
+      )}
 
       {view === 'catalog' && (
         <section className="wx-hero" aria-labelledby="catalog-heading">
@@ -606,50 +648,58 @@ function App() {
       )}
 
       <main className="wx-main">
-        <div className="wx-navstrip">
-          <div className="wx-navstrip-inner">
-            {view === 'catalog' && (
-              <>
-                <button
-                  type="button"
-                  className={`wx-cat ${activeSection === 'all' ? 'is-active' : ''}`}
-                  onClick={() => scrollToSection('top')}
-                >
-                  All
-                </button>
-                {showCategoryRail &&
-                  categories.map((cat, i) => {
-                    const id = sectionId(i)
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        className={`wx-cat ${activeSection === id ? 'is-active' : ''}`}
-                        onClick={() => scrollToSection(id)}
-                      >
-                        {truncateLabel(cat.name)}
-                      </button>
-                    )
-                  })}
-                <span className="wx-navstrip-spacer" />
-                <button type="button" className="wx-cat" onClick={openSchedule}>
-                  Schedule
-                </button>
-              </>
-            )}
-            {view === 'schedule' && (
-              <>
-                <button type="button" className="wx-cat wx-cat--ghost" onClick={openCatalog}>
-                  All Categories
-                </button>
-                <span className="wx-navstrip-spacer" />
-                <button type="button" className="wx-cat is-active" onClick={openSchedule}>
-                  Schedule
-                </button>
-              </>
-            )}
+        {view !== 'recruit' && (
+          <div className="wx-navstrip">
+            <div className="wx-navstrip-inner">
+              {view === 'catalog' && (
+                <>
+                  <button
+                    type="button"
+                    className={`wx-cat ${activeSection === 'all' ? 'is-active' : ''}`}
+                    onClick={() => scrollToSection('top')}
+                  >
+                    All
+                  </button>
+                  {showCategoryRail &&
+                    categories.map((cat, i) => {
+                      const id = sectionId(i)
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          className={`wx-cat ${activeSection === id ? 'is-active' : ''}`}
+                          onClick={() => scrollToSection(id)}
+                        >
+                          {truncateLabel(cat.name)}
+                        </button>
+                      )
+                    })}
+                  <span className="wx-navstrip-spacer" />
+                  <button type="button" className="wx-cat" onClick={openSchedule}>
+                    Schedule
+                  </button>
+                  <button type="button" className="wx-cat" onClick={openRecruit}>
+                    Recruit
+                  </button>
+                </>
+              )}
+              {view === 'schedule' && (
+                <>
+                  <button type="button" className="wx-cat wx-cat--ghost" onClick={openCatalog}>
+                    All Categories
+                  </button>
+                  <span className="wx-navstrip-spacer" />
+                  <button type="button" className="wx-cat is-active" onClick={openSchedule}>
+                    Schedule
+                  </button>
+                  <button type="button" className="wx-cat" onClick={openRecruit}>
+                    Recruit
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {dataSource === 'error' && loadError && (
           <div className="wx-alert" role="alert">
@@ -749,6 +799,8 @@ function App() {
             />
           </div>
         )}
+
+        {view === 'recruit' && <RecruitForm />}
       </main>
 
       <footer className="wx-footer">

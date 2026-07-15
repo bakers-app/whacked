@@ -7,6 +7,11 @@ import express from 'express'
 import pg from 'pg'
 import { mapServiceRow } from './mapRow.js'
 import { mapRunRow, normalizeRunDateKey } from './mapRunRow.js'
+import {
+  buildRecruitWebhookPayload,
+  postRecruitWebhook,
+  validateRecruitBody,
+} from './recruit.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
@@ -66,6 +71,42 @@ app.use(express.json())
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true })
+})
+
+/**
+ * Formulário público /recruit (gearcraft.gg) → Discord webhook #forms-recruit.
+ * Sem banco e sem API The Bakers.
+ * Env: DISCORD_RECRUIT_WEBHOOK_URL
+ */
+app.post('/api/recruit', async (req, res) => {
+  const webhookURL = String(process.env.DISCORD_RECRUIT_WEBHOOK_URL || '').trim()
+  if (!webhookURL) {
+    return res.status(503).json({
+      error: 'recruit_not_configured',
+      message:
+        'DISCORD_RECRUIT_WEBHOOK_URL is not set. Create a webhook in #forms-recruit and add it to .env.',
+    })
+  }
+
+  const validated = validateRecruitBody(req.body)
+  if (!validated.ok) {
+    return res.status(400).json(validated.error)
+  }
+
+  try {
+    const payload = buildRecruitWebhookPayload(validated.application)
+    await postRecruitWebhook(webhookURL, payload)
+    res.json({ status: 'sent' })
+  } catch (err) {
+    console.error('[api/recruit] discord webhook failed', err)
+    res.status(502).json({
+      error: 'recruit_discord_failed',
+      message:
+        err instanceof Error
+          ? err.message
+          : 'Could not post recruit application to Discord',
+    })
+  }
 })
 
 function isIsoDateString(s) {
