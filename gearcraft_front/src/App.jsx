@@ -588,14 +588,6 @@ function App() {
     })
   }
 
-  const openRecruit = () => {
-    navigateView('recruit')
-    setActiveSection('recruit')
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    })
-  }
-
   const showCategoryRail =
     view === 'catalog' && categories && categories.length > 0
 
@@ -678,9 +670,6 @@ function App() {
                   <button type="button" className="wx-cat" onClick={openSchedule}>
                     Schedule
                   </button>
-                  <button type="button" className="wx-cat" onClick={openRecruit}>
-                    Recruit
-                  </button>
                 </>
               )}
               {view === 'schedule' && (
@@ -691,9 +680,6 @@ function App() {
                   <span className="wx-navstrip-spacer" />
                   <button type="button" className="wx-cat is-active" onClick={openSchedule}>
                     Schedule
-                  </button>
-                  <button type="button" className="wx-cat" onClick={openRecruit}>
-                    Recruit
                   </button>
                 </>
               )}
