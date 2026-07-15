@@ -210,10 +210,28 @@ export function RecruitForm() {
 
       {status ? (
         <div
-          className={`wx-recruit-status ${status.type === 'ok' ? 'is-ok' : 'is-err'}`}
-          role="status"
+          className="wx-recruit-modal-backdrop"
+          role="presentation"
+          onClick={() => setStatus(null)}
         >
-          {status.text}
+          <div
+            className={`wx-recruit-modal ${status.type === 'ok' ? 'is-ok' : 'is-err'}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="recruit-modal-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p id="recruit-modal-title" className="wx-recruit-modal-text">
+              {status.text}
+            </p>
+            <button
+              type="button"
+              className="wx-recruit-modal-close"
+              onClick={() => setStatus(null)}
+            >
+              OK
+            </button>
+          </div>
         </div>
       ) : null}
 

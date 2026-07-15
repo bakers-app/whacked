@@ -44,23 +44,66 @@
   margin-top: 0.35rem;
 }
 
-.wx-recruit-status {
-  margin-bottom: 1rem;
-  border-radius: 0.75rem;
-  padding: 0.85rem 1rem;
-  font-size: 0.9rem;
+.wx-recruit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(6, 4, 14, 0.72);
+  backdrop-filter: blur(4px);
 }
 
-.wx-recruit-status.is-ok {
-  border: 1px solid rgba(52, 211, 153, 0.35);
-  background: rgba(16, 185, 129, 0.12);
+.wx-recruit-modal {
+  width: min(100%, 26rem);
+  border-radius: 1rem;
+  padding: 1.35rem 1.25rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #15101f;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  text-align: center;
+}
+
+.wx-recruit-modal.is-ok {
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.wx-recruit-modal.is-err {
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+.wx-recruit-modal-text {
+  margin: 0 0 1.15rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(237, 237, 237, 0.92);
+}
+
+.wx-recruit-modal.is-ok .wx-recruit-modal-text {
   color: #a7f3d0;
 }
 
-.wx-recruit-status.is-err {
-  border: 1px solid rgba(248, 113, 113, 0.35);
-  background: rgba(239, 68, 68, 0.12);
+.wx-recruit-modal.is-err .wx-recruit-modal-text {
   color: #fecaca;
+}
+
+.wx-recruit-modal-close {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #fff;
+  background: #7c3aed;
+}
+
+.wx-recruit-modal-close:hover {
+  background: #6d28d9;
 }
 
 .wx-recruit-form {
