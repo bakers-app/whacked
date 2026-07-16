@@ -5,43 +5,167 @@
 }
 
 .wx-recruit-hero {
-  margin-bottom: 1.75rem;
+  margin-bottom: 2.25rem;
 }
 
 .wx-recruit-kicker {
-  margin: 0 0 0.35rem;
-  font-size: 0.75rem;
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(196, 181, 253, 0.85);
 }
 
 .wx-recruit-headline {
-  margin: 0 0 0.75rem;
-  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  margin: 0 0 0.45rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   color: #fff;
+  line-height: 1.1;
+}
+
+.wx-recruit-tagline {
+  margin: 0 0 1.15rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: rgba(196, 181, 253, 0.95);
 }
 
 .wx-recruit-lead {
-  margin: 0 0 1rem;
-  color: rgba(237, 237, 237, 0.78);
-  line-height: 1.55;
-  font-size: 0.975rem;
+  margin: 0 0 0.65rem;
+  color: rgba(237, 237, 237, 0.8);
+  line-height: 1.6;
+  font-size: 1rem;
+  max-width: 40rem;
 }
 
-.wx-recruit-bullets {
+.wx-recruit-emphasis {
+  margin: 0 0 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: #fff;
+}
+
+.wx-recruit-highlights {
+  display: grid;
+  gap: 0;
+  margin: 0 0 1.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wx-recruit-hl {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.wx-recruit-hl:last-child {
+  border-bottom: none;
+}
+
+.wx-recruit-hl dt {
   margin: 0;
-  padding-left: 1.15rem;
-  color: rgba(237, 237, 237, 0.68);
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(196, 181, 253, 0.8);
+}
+
+.wx-recruit-hl dd {
+  margin: 0;
+  font-size: 0.925rem;
+  line-height: 1.55;
+  color: rgba(237, 237, 237, 0.78);
+}
+
+.wx-recruit-hl dd strong {
+  color: #fff;
+  font-weight: 650;
+}
+
+.wx-recruit-hl--accent dd {
+  color: rgba(237, 237, 237, 0.88);
+}
+
+@media (min-width: 640px) {
+  .wx-recruit-highlights {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .wx-recruit-hl {
+    padding: 1.15rem 1rem 1.15rem 0;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .wx-recruit-hl:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .wx-recruit-hl + .wx-recruit-hl {
+    padding-left: 1.15rem;
+  }
+}
+
+.wx-recruit-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.wx-recruit-block-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(196, 181, 253, 0.9);
+}
+
+.wx-recruit-block p {
+  margin: 0 0 0.75rem;
+  color: rgba(237, 237, 237, 0.75);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.wx-recruit-block p:last-child {
+  margin-bottom: 0;
+}
+
+.wx-recruit-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.wx-recruit-facts li {
+  display: grid;
+  gap: 0.2rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid rgba(139, 92, 246, 0.45);
+}
+
+.wx-recruit-facts strong {
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: #fff;
+}
+
+.wx-recruit-facts span {
   font-size: 0.9rem;
   line-height: 1.55;
-}
-
-.wx-recruit-bullets li + li {
-  margin-top: 0.35rem;
+  color: rgba(237, 237, 237, 0.7);
 }
 
 .wx-recruit-modal-backdrop {
@@ -132,12 +256,30 @@
   gap: 0.85rem;
 }
 
+.wx-recruit-field-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
 .wx-recruit-label {
   display: block;
   margin: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.wx-recruit-hint {
+  margin: 0;
+  font-size: 0.825rem;
+  line-height: 1.45;
+  color: rgba(237, 237, 237, 0.55);
+}
+
+.wx-recruit-fieldset .wx-recruit-hint {
+  margin-bottom: 0.55rem;
 }
 
 .wx-recruit-input {

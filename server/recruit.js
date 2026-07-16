@@ -1,5 +1,4 @@
 const REQUIRED_FIELDS = [
-  'email',
   'role',
   'wasOfficerOrRl',
   'handledTactics',
@@ -63,19 +62,7 @@ export function validateRecruitBody(body) {
     }
   }
 
-  const email = trim(data.email)
-  if (!email.includes('@') || !email.includes('.')) {
-    return {
-      ok: false,
-      error: {
-        error: 'invalid_email',
-        message: 'Please provide a valid email address.',
-      },
-    }
-  }
-
   const application = {
-    email,
     contents,
     role: trim(data.role),
     boostingExperience: trim(data.boostingExperience),
@@ -119,7 +106,6 @@ export function buildRecruitWebhookPayload(application) {
     timestamp: new Date().toISOString(),
     footer: { text: 'gearcraft.gg/recruit · sem persistência no banco' },
     fields: compactFields([
-      field('Email', application.email, true),
       field('Discord', application.discord, true),
       field('IGN', application.ign, true),
       field('Role', application.role, true),
