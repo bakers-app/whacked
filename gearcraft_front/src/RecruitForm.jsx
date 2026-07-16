@@ -227,7 +227,7 @@ export function RecruitForm() {
 
         <p className="wx-recruit-lead">
           Estamos em busca de jogadores dedicados e de alto desempenho para completar o
-          conteúdo completo das Raids, Mythic plus, PVP, Leveling e Achievements — com
+          conteúdo das Raids, Mythic plus, PVP, Leveling e Achievements — com
           remuneração em gold ou lulas durante o processo.
         </p>
         <p className="wx-recruit-emphasis">Você escolhe.</p>
