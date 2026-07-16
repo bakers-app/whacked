@@ -250,8 +250,7 @@ export function RecruitForm() {
           <div className="wx-recruit-hl wx-recruit-hl--accent">
             <dt>Recrutamento atual</dt>
             <dd>
-              Time noturno: início às <strong>18h ou 19h</strong>, até cerca das{' '}
-              <strong>01h</strong>.
+              Horário: <strong>10h às 02h</strong>.
             </dd>
           </div>
         </dl>
