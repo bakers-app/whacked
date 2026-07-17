@@ -12,6 +12,7 @@ import {
   postRecruitWebhook,
   validateRecruitBody,
 } from './recruit.js'
+import { appendRecruitToSheets, isRecruitSheetsConfigured } from './recruitSheets.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
@@ -74,9 +75,11 @@ app.get('/api/health', (_req, res) => {
 })
 
 /**
- * Formulário público /recruit (gearcraft.gg) → Discord webhook #forms-recruit.
- * Sem banco e sem API The Bakers.
- * Env: DISCORD_RECRUIT_WEBHOOK_URL
+ * Formulário público /recruit (gearcraft.gg) → Discord + Google Sheets.
+ * Env: DISCORD_RECRUIT_WEBHOOK_URL (obrigatório)
+ *      GOOGLE_SERVICE_ACCOUNT_JSON (recomendado) ou EMAIL+PRIVATE_KEY
+ *      RECRUIT_SHEETS_SPREADSHEET_ID / RECRUIT_SHEETS_TAB (opcional)
+ *      RECRUIT_SHEETS_WEBHOOK_URL (fallback Apps Script — muitas contas dão 403)
  */
 app.post('/api/recruit', async (req, res) => {
   const webhookURL = String(process.env.DISCORD_RECRUIT_WEBHOOK_URL || '').trim()
@@ -95,16 +98,25 @@ app.post('/api/recruit', async (req, res) => {
 
   try {
     const payload = buildRecruitWebhookPayload(validated.application)
-    await postRecruitWebhook(webhookURL, payload)
-    res.json({ status: 'sent' })
+    const tasks = [postRecruitWebhook(webhookURL, payload)]
+    if (isRecruitSheetsConfigured()) {
+      tasks.push(appendRecruitToSheets(validated.application))
+    }
+    const results = await Promise.all(tasks)
+    const sheetsResult = results[1]
+    res.json({
+      status: 'sent',
+      sheets: Boolean(sheetsResult?.used),
+      sheetsMethod: sheetsResult?.method || null,
+    })
   } catch (err) {
-    console.error('[api/recruit] discord webhook failed', err)
+    console.error('[api/recruit] delivery failed', err)
+    const msg =
+      err instanceof Error ? err.message : 'Could not deliver recruit application'
+    const isSheets = /sheets/i.test(msg)
     res.status(502).json({
-      error: 'recruit_discord_failed',
-      message:
-        err instanceof Error
-          ? err.message
-          : 'Could not post recruit application to Discord',
+      error: isSheets ? 'recruit_sheets_failed' : 'recruit_discord_failed',
+      message: msg,
     })
   }
 })
