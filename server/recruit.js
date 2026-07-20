@@ -52,6 +52,12 @@ export function validateRecruitBody(body) {
     : []
   if (!contents.length) missing.push('contents')
 
+  const language = Array.isArray(data.language)
+    ? data.language.map((item) => trim(item)).filter(Boolean)
+    : trim(data.language)
+      ? [trim(data.language)]
+      : []
+
   if (missing.length) {
     return {
       ok: false,
@@ -67,7 +73,7 @@ export function validateRecruitBody(body) {
     role: trim(data.role),
     boostingExperience: trim(data.boostingExperience),
     otherCommunities: trim(data.otherCommunities),
-    language: trim(data.language),
+    language: language.join(', '),
     achievementCanProvide: trim(data.achievementCanProvide),
     achievementTypes: trim(data.achievementTypes),
     levelingHours: trim(data.levelingHours),

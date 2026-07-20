@@ -11,11 +11,7 @@ const CONTENT_OPTIONS = [
 
 const ROLE_OPTIONS = ['Tank', 'Healer', 'Dps']
 
-const LANGUAGE_OPTIONS = [
-  { value: 'Si yo soy pero solo hablo espanol', label: 'Si yo soy pero solo hablo español' },
-  { value: 'Si yo soy y comprendo english', label: 'Si yo soy y comprendo english' },
-  { value: 'No soy', label: 'No soy' },
-]
+const LANGUAGE_OPTIONS = ['si soy', 'portugues', 'ingles', 'No soy']
 
 const OFFICER_OPTIONS = [
   'Sim, já fui raid leader',
@@ -39,7 +35,7 @@ function emptyForm() {
     role: '',
     boostingExperience: '',
     otherCommunities: '',
-    language: '',
+    language: [],
     achievementCanProvide: '',
     achievementTypes: '',
     levelingHours: '',
@@ -153,6 +149,18 @@ export function RecruitForm() {
         contents: exists
           ? prev.contents.filter((item) => item !== content)
           : [...prev.contents, content],
+      }
+    })
+  }
+
+  const toggleLanguage = (option) => {
+    setForm((prev) => {
+      const exists = prev.language.includes(option)
+      return {
+        ...prev,
+        language: exists
+          ? prev.language.filter((item) => item !== option)
+          : [...prev.language, option],
       }
     })
   }
@@ -451,19 +459,20 @@ export function RecruitForm() {
             <legend className="wx-recruit-label">
               Es espano hablante? Hablas ingles or portugues?
             </legend>
-            <div className="wx-recruit-radios wx-recruit-radios-stack">
-              {LANGUAGE_OPTIONS.map((option) => (
-                <label key={option.value} className="wx-recruit-radio">
-                  <input
-                    type="radio"
-                    name="language"
-                    value={option.value}
-                    checked={form.language === option.value}
-                    onChange={() => updateField('language', option.value)}
-                  />
-                  {option.label}
-                </label>
-              ))}
+            <div className="wx-recruit-chips">
+              {LANGUAGE_OPTIONS.map((option) => {
+                const active = form.language.includes(option)
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`wx-recruit-chip ${active ? 'is-active' : ''}`}
+                    onClick={() => toggleLanguage(option)}
+                  >
+                    {option}
+                  </button>
+                )
+              })}
             </div>
           </fieldset>
         </Section>
